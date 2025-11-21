@@ -11,6 +11,10 @@ from telegram.ext import (
     filters, 
     ContextTypes
 )
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения
+load_dotenv()
 
 # Настройка логирования
 logging.basicConfig(
@@ -20,7 +24,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Данные бота (из переменных окружения)
-TOKEN = os.environ.get('BOT_TOKEN', "8246616088:AAE8s7jnjgC9TDK-q8T3UF4ZMmyn54QzRGU")
+TOKEN = os.environ.get('BOT_TOKEN')
+if not TOKEN:
+    logger.error("BOT_TOKEN не установлен!")
+    raise ValueError("BOT_TOKEN не установлен в переменных окружения")
+
 MAIN_ADMIN_ID = 1349829403
 ALL_ADMIN_IDS = [1349829403, 5320953310, 6231170714]  # Все администраторы
 PROJECT_NAME = "VibeMc | Персонал"
@@ -662,9 +670,6 @@ def main():
     # Загружаем заявки при старте
     load_applications()
     
-    # Получаем порт из переменной окружения (для Heroku)
-    port = int(os.environ.get('PORT', 8443))
-    
     application = Application.builder().token(TOKEN).build()
     
     # Обработчик команды /start и кнопок
@@ -728,7 +733,7 @@ def main():
     # Запускаем бота
     print("Бот запущен!")
     
-    # Простой запуск через polling (работает и на Heroku)
+    # Простой запуск через polling
     application.run_polling()
 
 if __name__ == "__main__":
