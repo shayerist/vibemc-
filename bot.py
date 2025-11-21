@@ -23,11 +23,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Данные бота (из переменных окружения)
-TOKEN = os.environ.get('BOT_TOKEN')
-if not TOKEN:
-    logger.error("BOT_TOKEN не установлен!")
-    raise ValueError("BOT_TOKEN не установлен в переменных окружения")
+# Данные бота (из переменных окружения или значения по умолчанию)
+TOKEN = os.environ.get('BOT_TOKEN', "8246616088:AAE8s7jnjgC9TDK-q8T3UF4ZMmyn54QzRGU")
+
+# Логируем информацию о токене (без самого токена для безопасности)
+if os.environ.get('BOT_TOKEN'):
+    logger.info("BOT_TOKEN загружен из переменных окружения")
+else:
+    logger.warning("BOT_TOKEN не найден в переменных окружения, используется значение по умолчанию")
 
 MAIN_ADMIN_ID = 1349829403
 ALL_ADMIN_IDS = [1349829403, 5320953310, 6231170714]  # Все администраторы
