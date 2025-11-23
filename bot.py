@@ -675,18 +675,17 @@ def main():
     
     application = Application.builder().token(TOKEN).build()
     
-    # Обработчик команды /start и кнопок
+    # Обработчик команды /cancel ДО всех остальных
+    application.add_handler(CommandHandler("cancel", cancel))
+    
+    # Обработчики простых команд
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CallbackQueryHandler(button_handler, pattern="^(moder|media)$"))
-    
-    # Обработчик команды /admin
-    application.add_handler(CommandHandler("admin", admin_command))
-    application.add_handler(CallbackQueryHandler(admin_button_handler, pattern="^admin_(moder|media)$"))
-    
-    # Обработчик команды /help
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("admin", admin_command))
     
-    # Обработчик действий с заявками
+    # Обработчики кнопок
+    application.add_handler(CallbackQueryHandler(button_handler, pattern="^(moder|media)$"))
+    application.add_handler(CallbackQueryHandler(admin_button_handler, pattern="^admin_(moder|media)$"))
     application.add_handler(CallbackQueryHandler(handle_application_action, pattern=r"^(accept|reject)_\d+$"))
     
     # Настройка ConversationHandler для модераторов
@@ -728,13 +727,14 @@ def main():
         fallbacks=[CommandHandler("cancel", cancel)],
     )
     
-    # Добавляем обработчики бесед
+    # Добавляем обработчики бесед ПОСЛЕДНИМИ
     application.add_handler(moder_conv_handler)
     application.add_handler(media_conv_handler)
     application.add_handler(reject_conv_handler)
     
     # Запускаем бота
     print("Бот запущен!")
+    logger.info("Бот успешно запущен")
     
     # Простой запуск через polling
     application.run_polling()
